@@ -1,0 +1,55 @@
+@CHARSET "UTF-8";
+body{
+	background:#F2F2F2;
+}
+/* 容器 */
+.layui-container{
+	margin-top:15px;
+}
+.layui-carousel{
+	padding:10px;
+	background:#FFFFFF;
+	border-radius:5px;
+}
+
+.article-list{
+	border-radius:5px;
+	background:#FFFFFF;
+	margin-top:15px;
+}
+
+.layui-card{border-bottom:2px #eee dashed;}
+
+.layui-card-header{border-bottom:none;font-size:16px;font-weight:bold;}
+.layui-card-body{white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+
+
+/* 文章说明 */
+.details-box{
+	font-size:14px;
+	margin:10px;
+}
+
+/* 标题 */
+.layui-card-header{font-weight:bold;}
+.layui-card-header > a:hover{
+	color:red;
+	text-decoration:underline;
+	cursor:pointer;
+}
+
+.article-out-box{margin-top:15px;border-radius:5px;}
+
+/* 头部 */
+.layui-fluid{ padding: 0;}
+     
+/* 底部 */
+.fly-footer {margin: 10px 0; padding: 20px 0 30px; line-height: 30px; text-align: center; color: #737573; border-top: 1px solid #e2e2e2;}
+.fly-footer a{padding:0 6px; font-weight: 300; color: #333;}
+.fly-footer a:hover{color: #777;}
+.fly-union{margin-top: 10px; color: #999;}
+.fly-union>*{display: inline-block; vertical-align: middle;}
+.fly-union a[upyun] img{width: 80px;}
+.fly-union span{position: relative; top: 3px;}
+.fly-union span a{padding: 0; display: inline; color: #999;}
+.fly-union span a:hover{text-decoration: underline;}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	
+	<!-- Spring的配置文件，这里主要配置和业务逻辑有关的 -->
+	  <context:component-scan base-package="com.qyhl">
+	      <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	  </context:component-scan>
+	
+	<!-- 数据源 -->
+	<context:property-placeholder location="classpath:spring/dbconfig.properties"/>
+	<!-- <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"> -->
+	   <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		
+		<!-- 配置初始化大小、最小、最大 --> 
+		  <property name="initialSize" value="2" /> 
+		  <property name="minIdle" value="2" /> 
+		  <property name="maxActive" value="10" />
+		
+		  <!-- 配置获取连接等待超时的时间 --> 
+		  <property name="maxWait" value="10000" />
+		
+		  <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 --> 
+		  <property name="timeBetweenEvictionRunsMillis" value="60000" />
+		
+		  <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 --> 
+		  <property name="minEvictableIdleTimeMillis" value="300000" />
+		
+		  <property name="testWhileIdle" value="true" />
+		
+		  <!-- 这里建议配置为TRUE，防止取到的连接不可用 --> 
+		  <property name="testOnBorrow" value="true" /> 
+		  <property name="testOnReturn" value="false" />
+		
+		  <!-- 打开PSCache，并且指定每个连接上PSCache的大小 --> 
+		  <property name="poolPreparedStatements" value="true" /> 
+		  <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+		
+		  <!-- 这里配置提交方式，默认就是TRUE，可以不用配置 -->
+		  <property name="defaultAutoCommit" value="true" />
+		
+		  <!-- 验证连接有效与否的SQL，不同的数据配置不同 --> 
+		  <property name="validationQuery" value="select 1" /> 
+	</bean>
+	
+	<!-- 事务管理器 -->
+	<bean id="dataSourceTransactionManager" 
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 基于注解的事务管理 -->
+	<tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>
+	
+	
+	<!--  配置SqlSessionFactoryBean 
+		Mybatis提供的: org.mybatis.spring.SqlSessionFactoryBean
+		MP提供的:com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean
+	 -->
+	<bean id="sqlSessionFactoryBean" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<!-- 别名处理 -->
+		<property name="typeAliasesPackage" value="com.qyhl.tpsb.entity"></property>
+		 <!-- MP 全局配置注入 -->
+		<property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <bean id="paginationInterceptor" class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
+                    <property name="dialectType" value="mysql" />
+                </bean>
+            </array>
+        </property>	
+		
+		<!-- 注入全局MP策略配置 -->
+		<property name="globalConfig" ref="globalConfiguration"></property>
+	</bean>
+	
+	<!-- 定义MybatisPlus的全局策略配置；需要注入到工厂中才生效-->
+	<bean id ="globalConfiguration" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+		<!-- 在2.3版本以后，dbColumnUnderline(驼峰命名解决) 默认值就是true -->
+		<property name="dbColumnUnderline" value="true"></property>
+		
+		<!-- 全局的主键策略 -->
+		<!-- <property name="idType" value="0"></property> -->
+		
+		<!-- 全局的表前缀策略配置 -->
+		<!-- <property name="tablePrefix" value="tb_"></property> -->
+	</bean>
+	
+	<!-- 
+		配置mybatis 扫描mapper接口的路径
+	 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.qyhl.tpsb.mapper"></property>
+	</bean>
+	
+	
+	
+	
+</beans>

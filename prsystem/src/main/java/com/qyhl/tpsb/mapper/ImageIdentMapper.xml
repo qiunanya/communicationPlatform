@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyhl.tpsb.mapper.ImageIdentMapper">
+
+    
+   <select id="getIdentImgPages" resultType="com.qyhl.tpsb.entity.IdentPicEntity">
+    
+     SELECT
+	 ti.*, tu.username
+		FROM
+			tb_identpic AS ti
+		LEFT JOIN tb_user AS tu ON ti.userid = tu.userid 
+		 <where>
+		     <if test="userid !=null and userid !=''">
+               and tu.userid=#{userid}
+            </if>
+            <if test="picname !=null and picname !=''">
+              and imgname like concat(concat("%",#{picname}),"%")
+            </if>
+        </where>
+		LIMIT #{start},#{size}
+     </select>
+   
+   <select id="selectUserImageCount" resultType="Integer">
+    select count(*) from tb_identpic
+        <where>
+            <if test="userid !=null and userid !=''">
+             and userid=#{userid}
+            </if>
+            <if test="picname !=null and picname !=''">
+             and imgname like concat(concat("%",#{picname}),"%")
+            </if>
+        </where>
+        
+   </select>
+   
+   <select id="getImageDataPage" resultType="com.qyhl.tpsb.entity.IdentPicEntity">
+       SELECT
+	        ti.*, tu.username
+		FROM
+			tb_identpic AS ti
+		LEFT JOIN tb_user AS tu ON ti.userid = tu.userid
+		<where>
+            <if test="picname !=null and picname !=''">
+              imgname like concat(concat("%",#{picname}),"%")
+            </if>
+        </where>
+		LIMIT #{start},#{size}
+     
+   </select>
+   
+   <select id="selectImageCounts" resultType="Integer">
+       select count(*) from tb_identpic
+        <where>
+            <if test="picname !=null and picname !=''">
+              imgname like concat(concat("%",#{picname}),"%")
+            </if>
+        </where>
+   </select>
+   
+   <update id="saveImageIdentResult" parameterType="com.qyhl.tpsb.entity.IdentPicEntity">
+     update tb_identpic set identresult=#{identresult} where identimg=#{identimg}
+   </update>
+
+</mapper>

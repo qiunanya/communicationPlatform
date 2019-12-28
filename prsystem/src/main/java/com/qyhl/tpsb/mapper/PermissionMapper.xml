@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyhl.tpsb.mapper.PermissionMapper">
+   <insert id="addPermission" parameterType="com.qyhl.tpsb.entity.PermissionEntity">
+        insert into tb_permission (title,pid,url,icon,status,create_id,create_person,create_time) values
+        (#{title},#{pid},#{url},#{icon},#{status},#{create_id},#{create_person},#{create_time})
+      
+   </insert>
+   
+   <update id="updatePermission" parameterType="com.qyhl.tpsb.entity.PermissionEntity">
+       update tb_permission set title = #{title},pid = #{pid},url = #{url},icon = #{icon}
+         ,update_id = #{updateId},update_person = #{updatePerson},update_time = #{updateTime} 
+         where id = #{id}
+   </update>
+    
+   <select id="getAllUserPermissionByUserId" parameterType="com.qyhl.tpsb.entity.PermissionEntity"
+    resultType="com.qyhl.tpsb.entity.PermissionEntity">
+        SELECT
+				*,title as name
+			FROM
+				tb_permission
+			WHERE
+				id IN (
+					SELECT
+						permission_id
+					FROM
+						tb_role_permission
+					WHERE
+						role_id IN (
+							SELECT
+								role_id
+							FROM
+								tb_user_role
+							WHERE
+								user_id = #{userid} 
+						)
+				) and status = 1
+    
+    </select> 
+    
+</mapper>
